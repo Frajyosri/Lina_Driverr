@@ -28,6 +28,7 @@ class CommandeApi {
     http.Response response = await http
         .get(Uri.parse("http://10.0.2.2:8000/api/livreur/commande/$code"));
     debugPrint(response.body);
+    debugPrint(code);
     debugPrint("${response.statusCode}");
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -42,10 +43,8 @@ class CommandeApi {
   }
 
   Future<void> UpdateCommandeStat(String code) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    var code_Cmd = pref.getString("code_cmd");
     http.Response response = await http
-        .put(Uri.parse('http://10.0.2.2:8000/api/livreur/CommandState/cmd1'));
+        .put(Uri.parse('http://10.0.2.2:8000/api/livreur/CommandState/$code'));
     debugPrint(response.body);
     if (response.statusCode == 201) {
       debugPrint("Updated With success");

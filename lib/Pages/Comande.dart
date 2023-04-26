@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lina_driver/Pages/Home.dart';
 import 'package:lina_driver/Pages/Profile.dart';
 import 'package:lina_driver/bloc/commande_bloc.dart';
 import 'package:lina_driver/models/CommandeDtails.dart';
@@ -19,13 +20,21 @@ class CommandPage extends StatefulWidget {
 
 class _CommandPageState extends State<CommandPage> {
   bool _isDispo = true;
-  String Code = "";
-  String code_cmd = "";
+  String codeCmd = "";
+  String codeCommande = "";
+  String code = "";
   @override
   void initState() {
     super.initState();
     getSelectedValue();
-    SetCodeCommande();
+    createCodeCommande();
+    debugPrint("$_isDispo");
+    debugPrint(codeCmd);
+  }
+
+  Future<void> createCodeCommande() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString("code", code);
   }
 
   List<Commande> CommandeListe = [];
@@ -39,11 +48,11 @@ class _CommandPageState extends State<CommandPage> {
         }
         if (state is SuccessCommandeListe) {
           CommandeListe = state.commandeListe;
-          return ComandCard(CommandeListe);
+          return comandCard(CommandeListe);
         }
         if (state is SuccessCommandeDetails) {
-          CommandeDetails = state.DetailsCommande;
-          return CommandeDetailsUI(CommandeDetails);
+          CommandeDetails = state.detailsCommande;
+          return commandeDetailsUI(CommandeDetails);
         }
         if (state is SuccessCommandeUpdate) {}
         return SafeArea(
@@ -114,20 +123,23 @@ class _CommandPageState extends State<CommandPage> {
                     ),
                     Positioned(
                       bottom: 0,
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height / 18,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            context
-                                .read<CommandeBloc>()
-                                .add(GetCommandeEvent());
-                          },
-                          child: const Text(
-                            "Livrer Commande",
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: AutofillHints.location),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height / 20,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              context
+                                  .read<CommandeBloc>()
+                                  .add(GetCommandeEvent());
+                            },
+                            child: const Text(
+                              "Livrer Commande",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: AutofillHints.location),
+                            ),
                           ),
                         ),
                       ),
@@ -142,7 +154,7 @@ class _CommandPageState extends State<CommandPage> {
     );
   }
 
-  Widget Header() {
+  Widget header() {
     return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -214,12 +226,12 @@ class _CommandPageState extends State<CommandPage> {
         ));
   }
 
-  Widget ComandCard(List<Commande> cmd) {
+  Widget comandCard(List<Commande> cmd) {
     return Scaffold(
         backgroundColor: Colors.white,
         extendBody: true,
         body: Column(children: [
-          Expanded(child: Header()),
+          Expanded(child: header()),
           Expanded(
             flex: 3,
             child: RefreshIndicator(
@@ -234,19 +246,14 @@ class _CommandPageState extends State<CommandPage> {
                     onTap: () async {
                       SharedPreferences pref =
                           await SharedPreferences.getInstance();
-                      var code_Cmd = pref.getString("code_cmd");
+                      codeCmd = pref.getString("code")!;
                       setState(() {
-                        code_Cmd = cmd[index].id;
-                        print(code_Cmd);
+                        codeCmd = cmd[index].id;
                       });
+                      debugPrint(codeCmd);
                       context
                           .read<CommandeBloc>()
                           .add(GetCommandeDetailsEvent());
-                    },
-                    onDoubleTap: () async {
-                      context
-                          .read<CommandeBloc>()
-                          .add(UpdateCommandeStatEvent());
                     },
                     child: Card(
                       child: Column(
@@ -285,9 +292,6 @@ class _CommandPageState extends State<CommandPage> {
                               ),
                             ],
                           ),
-                          /* const SizedBox(
-                            width: 150,
-                          ),*/
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -328,16 +332,8 @@ class _CommandPageState extends State<CommandPage> {
                                     )
                                   : ElevatedButton(
                                       onPressed: () async {
-                                        SharedPreferences pref =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        var code = pref.getString("code");
-                                        setState(() {
-                                          code = cmd[index].id;
-                                        });
-                                        print(code);
                                         await CommandeApi()
-                                            .UpdateCommandeStat(code!);
+                                            .UpdateCommandeStat(cmd[index].id);
                                       },
                                       style: ButtonStyle(
                                           backgroundColor:
@@ -358,17 +354,15 @@ class _CommandPageState extends State<CommandPage> {
         ]));
   }
 
-  Widget CommandeDetailsUI(List<CommandDetails> details) {
+  Widget commandeDetailsUI(List<CommandDetails> details) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Details Commande"),
         centerTitle: true,
         leading: IconButton(
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (contex) => ComandCard(CommandeListe)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (contex) => const HomePage()));
             },
             icon: const Icon(Icons.arrow_back)),
       ),
@@ -445,17 +439,9 @@ class _CommandPageState extends State<CommandPage> {
 
   getSelectedValue() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
+
     setState(() {
       _isDispo = pref.getBool("isDispo") != false;
     });
   }
-
-  SetCodeCommande() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString("code", Code);
-    SharedPreferences pref2 = await SharedPreferences.getInstance();
-    pref.setString("Code_cmd", code_cmd);
-  }
-
-  void UpdateState(bool isDispo) async {}
 }

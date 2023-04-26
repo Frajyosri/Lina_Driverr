@@ -26,9 +26,9 @@ class CommandeBloc extends Bloc<CommandeEvent, CommandeState> {
 
   FutureOr<void> _GetCommandeDetails(
       GetCommandeDetailsEvent event, Emitter<CommandeState> emit) async {
-    emit(Loading());
-    SharedPreferences pref = await SharedPreferences.getInstance();
+    var pref = await SharedPreferences.getInstance();
     var code = pref.getString("code");
+    emit(Loading());
     List<CommandDetails> Details =
         await CommandeApi().GetCommandeDetails(code!);
     emit(SuccessCommandeDetails(Details));

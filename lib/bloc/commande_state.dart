@@ -19,8 +19,8 @@ class SuccessCommandeListe extends CommandeState {
 class Loading extends CommandeState {}
 
 class SuccessCommandeDetails extends CommandeState {
-  List<CommandDetails> DetailsCommande;
-  SuccessCommandeDetails(this.DetailsCommande);
+  List<CommandDetails> detailsCommande;
+  SuccessCommandeDetails(this.detailsCommande);
 }
 
 class SuccessCommandeUpdate extends CommandeState {}

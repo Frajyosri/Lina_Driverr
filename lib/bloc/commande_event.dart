@@ -4,6 +4,8 @@ abstract class CommandeEvent {}
 
 class GetCommandeEvent extends CommandeEvent {}
 
-class GetCommandeDetailsEvent extends CommandeEvent {}
+class GetCommandeDetailsEvent extends CommandeEvent {
+  GetCommandeDetailsEvent();
+}
 
 class UpdateCommandeStatEvent extends CommandeEvent {}
