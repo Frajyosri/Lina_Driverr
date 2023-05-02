@@ -8,3 +8,5 @@ class SuccessUserListe extends UserBlocState {
   Map<String, dynamic> UserListe;
   SuccessUserListe(this.UserListe);
 }
+
+class SuccessUserLogin extends UserBlocState {}

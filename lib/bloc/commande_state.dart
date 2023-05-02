@@ -13,6 +13,7 @@ class CommandeInitial extends CommandeState {}
 class SuccessCommandeListe extends CommandeState {
   List<Commande> commandeListe;
   SuccessCommandeListe(this.commandeListe);
+  @override
   List<Object?> get props => [commandeListe];
 }
 
@@ -24,3 +25,12 @@ class SuccessCommandeDetails extends CommandeState {
 }
 
 class SuccessCommandeUpdate extends CommandeState {}
+
+class SuccessCommandeRefrech extends CommandeState {
+  List<Commande> newcommandeListe;
+  SuccessCommandeRefrech(this.newcommandeListe);
+  @override
+  List<Object?> get props => [newcommandeListe];
+}
+
+class VerfierCommande extends CommandeState {}

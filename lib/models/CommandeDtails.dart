@@ -11,6 +11,8 @@ class CommandDetails {
   late int prixCard;
   late int montant;
   late String dateFact;
+  late String etat;
+  late String code_cmd;
 
   CommandDetails(
       {required this.nomCom,
@@ -24,7 +26,9 @@ class CommandDetails {
       required this.qteProduit,
       required this.prixCard,
       required this.montant,
-      required this.dateFact});
+      required this.dateFact,
+      required this.etat,
+      required this.code_cmd});
 
   CommandDetails.fromJson(Map<String, dynamic> json) {
     nomCom = json['NomCom'];
@@ -39,5 +43,7 @@ class CommandDetails {
     prixCard = json['Prix_card'];
     montant = json['montant'];
     dateFact = json['dateFact'];
+    etat = json['etat'];
+    code_cmd = json['code_cmd'];
   }
 }

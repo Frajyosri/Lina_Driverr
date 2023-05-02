@@ -10,6 +10,7 @@ environment:
 
 dependencies:
   cupertino_icons: ^1.0.2
+  quickalert: ^1.0.1
   lottie: ^2.3.0
   http: ^0.13.5
   flutter:
@@ -27,6 +28,7 @@ dependencies:
   equatable: ^2.0.5
 
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -40,7 +42,7 @@ flutter:
 
   assets:
       - assets/animation/
-      - assets/images/3724832.jpg
+      - assets/images/
 
 
  
@@ -54,5 +56,9 @@ flutter:
       - family: Lobster
         fonts:
           - asset: assets/fonts/Lobster/Lobster-Regular.ttf 
+      - family: Oswald
+        fonts:
+          - asset: assets/fonts/Oswald/Oswald-Regular.ttf 
+   
  
   

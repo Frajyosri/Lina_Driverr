@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lina_driver/Pages/Login.dart';
 import 'package:lina_driver/bloc/user_bloc_bloc.dart';
-import 'package:lina_driver/models/livreurModel.dart';
-import 'package:http/http.dart' as http;
+import 'package:lina_driver/services/UserApi.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -19,7 +18,11 @@ class _ProfileState extends State<Profile> {
   final _phoneController = TextEditingController();
   final _mdpController = TextEditingController();
   final _newMdpController = TextEditingController();
-  String email = "", mdp = "", newMdp = "", phone = "";
+  String email = "";
+  String mdp = "";
+  String newMdp = "";
+  String phone = "";
+  bool isEnabel = false;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -135,7 +138,18 @@ class _ProfileState extends State<Profile> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Login()));
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
+                            var islogin = pref.getBool("isLogin");
+                            setState(() {
+                              islogin = false;
+                            });
+                          },
                           child: Row(
                             children: const [
                               Icon(
@@ -173,152 +187,178 @@ class _ProfileState extends State<Profile> {
             title: const Text("Modifier Profile"),
             centerTitle: true,
           ),
-          body: Form(
-            key: _formkey,
-            child: ListView(scrollDirection: Axis.vertical, children: [
-              Column(children: [
-                TextField(
-                  enabled: false,
-                  decoration: InputDecoration(
-                    label: Text(livreur["nomliv"].toString()),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.black,
-                          strokeAlign: 2,
-                          style: BorderStyle.solid),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                TextField(
-                    enabled: false,
-                    decoration: InputDecoration(
-                        label: Text(livreur["prenomliv"].toString()),
+          body: Stack(children: [
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Form(
+                key: _formkey,
+                child: ListView(scrollDirection: Axis.vertical, children: [
+                  Column(children: [
+                    TextField(
+                      enabled: false,
+                      decoration: InputDecoration(
+                        label: Text(livreur["nomliv"].toString()),
                         border: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                                width: 1,
-                                strokeAlign: BorderSide.strokeAlignOutside,
-                                color: Colors.black12)))),
-                const SizedBox(
-                  height: 25,
-                ),
-                TextFormField(
-                  onChanged: (value) {
-                    setState(() {
-                      email = value;
-                    });
-                  },
-                  validator: (val) =>
-                      val!.isEmpty ? "Merci de saisir votre Email " : null,
-                  controller: _emailController,
-                  enabled: true,
-                  autofillHints: Characters.empty,
-                  decoration: InputDecoration(
-                    label: Text(livreur["email"].toString()),
-                    hintText: livreur["email"].toString(),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1,
-                          strokeAlign: BorderSide.strokeAlignOutside,
-                          color: Colors.black12),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                TextFormField(
-                  onChanged: (value) {
-                    setState(() {
-                      phone = value;
-                    });
-                  },
-                  validator: (val) =>
-                      val!.isEmpty ? "Merci de saisir votre Telephone" : null,
-                  controller: _phoneController,
-                  enabled: true,
-                  autofillHints: Characters.empty,
-                  decoration: InputDecoration(
-                    label: Text("+216${livreur["phoneliv"].toString()}"),
-                    hintText: livreur["phoneliv"].toString(),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1,
-                          strokeAlign: BorderSide.strokeAlignOutside,
-                          color: Colors.black12),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                TextFormField(
-                  validator: (val) => val!.isEmpty && val.length < 6
-                      ? "Merci de saisir Une Mot de passe"
-                      : null,
-                  controller: _mdpController,
-                  obscureText: true,
-                  enabled: true,
-                  decoration: const InputDecoration(
-                    label: Text("Ancien Mot de passe "),
-                    hintText: "********",
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1,
-                          strokeAlign: BorderSide.strokeAlignOutside,
-                          color: Colors.black12),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                TextFormField(
-                  obscureText: true,
-                  validator: (val) => val!.isEmpty && val.length < 6
-                      ? "Merci de saisir Un Nouveaux Mot de passe"
-                      : null,
-                  controller: _newMdpController,
-                  enabled: true,
-                  decoration: const InputDecoration(
-                    label: Text("Nouveau Mot de passe "),
-                    hintText: "*******",
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1,
-                          strokeAlign: BorderSide.strokeAlignOutside,
-                          color: Colors.black12),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formkey.currentState!.validate()) {
-                          if (livreur["mdp"] != mdp) {
-                            debugPrint('Mot de passe ne pas corecct  ');
-                          } else {
-                            debugPrint('Updated !! ');
-                          }
-                        }
-                      },
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            letterSpacing: 2),
+                          borderSide: BorderSide(
+                              color: Colors.black,
+                              strokeAlign: 2,
+                              style: BorderStyle.solid),
+                        ),
                       ),
                     ),
-                  ],
-                )
-              ]),
-            ]),
-          ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    TextField(
+                        enabled: false,
+                        decoration: InputDecoration(
+                            label: Text(livreur["prenomliv"].toString()),
+                            border: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    width: 1,
+                                    strokeAlign: BorderSide.strokeAlignOutside,
+                                    color: Colors.black12)))),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    TextFormField(
+                      onChanged: (value) {
+                        setState(() {
+                          email = value;
+                        });
+                      },
+                      validator: (val) =>
+                          val!.isEmpty ? "Merci de saisir votre Email " : null,
+                      controller: _emailController,
+                      enabled: true,
+                      autofillHints: Characters.empty,
+                      decoration: InputDecoration(
+                        label: const Text("Email"),
+                        hintText: livreur["email"].toString(),
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              strokeAlign: BorderSide.strokeAlignOutside,
+                              color: Colors.black12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    TextFormField(
+                      onChanged: (value) {
+                        setState(() {
+                          phone = value;
+                        });
+                      },
+                      validator: (val) => val!.isEmpty
+                          ? "Merci de saisir votre Telephone"
+                          : null,
+                      controller: _phoneController,
+                      enabled: true,
+                      autofillHints: Characters.empty,
+                      decoration: InputDecoration(
+                        label: const Text("Num° Telephone "),
+                        hintText: "+216 ${livreur["phoneliv"].toString()}",
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              strokeAlign: BorderSide.strokeAlignOutside,
+                              color: Colors.black12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    TextFormField(
+                      onChanged: (value) {
+                        setState(() {
+                          mdp = value;
+                        });
+                      },
+                      validator: (val) => val!.isEmpty && val.length < 6
+                          ? "Merci de saisir Une Mot de passe"
+                          : val != livreur["mdp"]
+                              ? "Mot de passe ne pas Correct ! "
+                              : null,
+                      controller: _mdpController,
+                      obscureText: true,
+                      enabled: true,
+                      decoration: const InputDecoration(
+                        label: Text("Ancien Mot de passe "),
+                        hintText: "********",
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              strokeAlign: BorderSide.strokeAlignOutside,
+                              color: Colors.black12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    TextFormField(
+                      onChanged: (value) {
+                        setState(() {
+                          newMdp = value;
+                        });
+                      },
+                      obscureText: true,
+                      validator: (val) => val!.isEmpty && val.length < 6
+                          ? "Merci de saisir Un Nouveaux Mot de passe"
+                          : null,
+                      controller: _newMdpController,
+                      enabled: true,
+                      decoration: const InputDecoration(
+                        label: Text("Nouveau Mot de passe "),
+                        hintText: "*******",
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              strokeAlign: BorderSide.strokeAlignOutside,
+                              color: Colors.black12),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width - 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_formkey.currentState!.validate()) {
+                                  UserApi().updateDriver(
+                                      email, phone, newMdp, livreur["id"]);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Profile()));
+                                }
+                              },
+                              child: const Text(
+                                "Save",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    letterSpacing: 2),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ]),
+                ]),
+              ),
+            ),
+          ]),
         ),
       ),
     );
