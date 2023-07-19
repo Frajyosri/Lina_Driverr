@@ -22,7 +22,7 @@ class _ProfileState extends State<Profile> {
   String mdp = "";
   String newMdp = "";
   String phone = "";
-  bool isEnabel = false;
+  bool isEnabel = true;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -272,28 +272,35 @@ class _ProfileState extends State<Profile> {
                     const SizedBox(
                       height: 25,
                     ),
-                    TextFormField(
-                      onChanged: (value) {
+                    GestureDetector(
+                      onDoubleTap: () {
                         setState(() {
-                          mdp = value;
+                          isEnabel = !isEnabel;
                         });
                       },
-                      validator: (val) => val!.isEmpty && val.length < 6
-                          ? "Merci de saisir Une Mot de passe"
-                          : val != livreur["mdp"]
-                              ? "Mot de passe ne pas Correct ! "
-                              : null,
-                      controller: _mdpController,
-                      obscureText: true,
-                      enabled: true,
-                      decoration: const InputDecoration(
-                        label: Text("Ancien Mot de passe "),
-                        hintText: "********",
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              width: 1,
-                              strokeAlign: BorderSide.strokeAlignOutside,
-                              color: Colors.black12),
+                      child: TextFormField(
+                        onChanged: (value) {
+                          setState(() {
+                            mdp = value;
+                          });
+                        },
+                        validator: (val) => val!.isEmpty && val.length < 6
+                            ? "Merci de saisir Une Mot de passe"
+                            : val != livreur["mdp"]
+                                ? "Mot de passe ne pas Correct ! "
+                                : null,
+                        controller: _mdpController,
+                        obscureText: isEnabel,
+                        enabled: true,
+                        decoration: const InputDecoration(
+                          label: Text("Ancien Mot de passe "),
+                          hintText: "********",
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 1,
+                                strokeAlign: BorderSide.strokeAlignOutside,
+                                color: Colors.black12),
+                          ),
                         ),
                       ),
                     ),

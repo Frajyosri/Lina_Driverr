@@ -400,6 +400,8 @@ class _CommandPageState extends State<CommandPage> {
   }
 
   Widget commandeDetailsUI(List<CommandDetails> details) {
+    var prixC = details[0].montant;
+    var result = prixC.toDouble();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Details Commande"),
@@ -573,10 +575,12 @@ class _CommandPageState extends State<CommandPage> {
                                           Text("${details[item].qteProduit} ",
                                               style: const TextStyle(
                                                   fontSize: 15)),
-                                          Text(details[item].nomProduit,
-                                              style: const TextStyle(
-                                                  fontSize: 15)),
-                                          Text("${details[item].prixProduit}",
+                                          Text(
+                                            details[item].nomProduit,
+                                            style:
+                                                const TextStyle(fontSize: 15),
+                                          ),
+                                          Text(" ${details[item].prixProduit}",
                                               style:
                                                   const TextStyle(fontSize: 15))
                                         ],
@@ -606,7 +610,7 @@ class _CommandPageState extends State<CommandPage> {
                   style: TextStyle(color: Colors.blue, fontSize: 20),
                 ),
                 Text(
-                  "${details[0].montant}DT ",
+                  "${result}DT ",
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold),
                 )

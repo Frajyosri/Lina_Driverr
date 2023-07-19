@@ -6,10 +6,9 @@ class CommandDetails {
   late String phoneCom;
   late String phoneCli;
   late String nomProduit;
-  late int prixProduit;
+  var prixProduit;
   late int qteProduit;
-  late int prixCard;
-  late int montant;
+  var montant;
   late String dateFact;
   late String etat;
   late String code_cmd;
@@ -24,7 +23,6 @@ class CommandDetails {
       required this.nomProduit,
       required this.prixProduit,
       required this.qteProduit,
-      required this.prixCard,
       required this.montant,
       required this.dateFact,
       required this.etat,
@@ -40,7 +38,6 @@ class CommandDetails {
     nomProduit = json['nom_Produit'];
     prixProduit = json['prix_produit'];
     qteProduit = json['qte_produit'];
-    prixCard = json['Prix_card'];
     montant = json['montant'];
     dateFact = json['dateFact'];
     etat = json['etat'];
